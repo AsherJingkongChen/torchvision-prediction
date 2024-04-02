@@ -46,10 +46,6 @@ class TrainingHyperParameters:
             ),
             "normalizer": (None, nn.BatchNorm1d),
         }
-    
-    @staticmethod
-    def get_max_learning_epochs() -> int:
-        return max(TrainingHyperParameters.DOMAIN()["learning_epochs"])
 
     @staticmethod
     def get_all_combination_count() -> int:
