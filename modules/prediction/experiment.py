@@ -35,9 +35,8 @@ feature_count = (
     .item()
 )
 
-# 1. Enumerate all hyper-parameters
-# 2. update the top K combinations of training hyper-parameters
-for HP in list(TrainingHyperParameters.get_all_combinations())[-1:]:
+# Search top K combinations of training hyper-parameters all hyper-parameters
+for HP in list(TrainingHyperParameters.get_all_combinations())[-2:]:
     # Define the model
     model = nn.Sequential(
         nn.Flatten(),
@@ -51,6 +50,7 @@ for HP in list(TrainingHyperParameters.get_all_combinations())[-1:]:
         nn.Linear(HP.hidden_node_count, 1, device=DEVICE),
     )
 
+    # Initialize the weights of the model
     def init_weights(module: nn.Module) -> None:
         """
         A helper function to initialize the weights of a `torch.nn.Module`
@@ -61,7 +61,6 @@ for HP in list(TrainingHyperParameters.get_all_combinations())[-1:]:
         except Exception:
             return
 
-    # Initialize the weights of the model
     model.apply(init_weights)
 
     # Define the optimizer and the learning rate scheduler
