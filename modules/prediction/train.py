@@ -1,4 +1,4 @@
-from torch import device, no_grad, nn
+from torch import device, nn
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from .hyper_parameters import TrainingHyperParameters
