@@ -13,11 +13,20 @@ from .train import train_model
 
 # Define the settings of the experiment
 DEVICE = request_best_device()
-ENSEMBLE_COUNT: int = 5
 RANDOM_SEED: int = 96
+ENSEMBLE_COUNT: int = 5
+DATA = construct_KMNIST()
+DATA_COUNT: int = 100
+DATA_TRAIN_RATIO: float = 0.80
+DATA_TRAIN_COUNT: int = int(DATA_TRAIN_RATIO * DATA_COUNT)
+DATA_TEST_COUNT: int = DATA_COUNT - DATA_TRAIN_COUNT
 DATA_TRAIN, DATA_TEST, _ = random_split(
-    dataset=construct_KMNIST(),
-    lengths=[0.0008, 0.0002, 1 - 0.0008 - 0.0002],
+    dataset=DATA,
+    lengths=[
+        DATA_TRAIN_COUNT,
+        DATA_TEST_COUNT,
+        len(DATA) - DATA_TRAIN_COUNT - DATA_TEST_COUNT,
+    ],
     generator=Generator().manual_seed(RANDOM_SEED),
 )
 DATA_TRAIN = DataLoader(DATA_TRAIN, batch_size=1 << 14)
@@ -37,6 +46,8 @@ If `None` or Falsy, a new snapshot will be created.
 
 It allows faster inference by loading the pre-trained models.
 """
+
+_ = None
 
 
 def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float]]:
@@ -60,7 +71,7 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
 
     with progress_bar:
         for hyper_parameters in list(TrainingHyperParameters.get_all_combinations())[
-            -2:
+            -10:
         ]:
             model = train_model(
                 data_train=DATA_TRAIN,
