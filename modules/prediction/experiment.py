@@ -2,6 +2,7 @@ from pprint import pprint
 from torch import float32, int32, Generator, no_grad, nn, tensor
 from torch.utils.data import DataLoader, random_split
 from tqdm.auto import tqdm
+
 from ..data_construction.download_builtin import construct_KMNIST
 from .environment import request_best_device
 from .hyper_parameters import TrainingHyperParameters
@@ -11,7 +12,8 @@ from .train import train_model
 
 # Define the settings of the experiment
 DEVICE = request_best_device()
-ENSEMBLE_COUNT: int = 5
+SNAPSHOT_INDEX: int = 0
+TOP_MODEL_MAXIMUM: int = 5
 RANDOM_SEED: int = 96
 DATA_TRAIN, DATA_TEST, _ = random_split(
     dataset=construct_KMNIST(),
@@ -35,9 +37,9 @@ progress_bar = tqdm(
     * max(TrainingHyperParameters.DOMAIN()["learning_epochs"]),
     leave=True,
 )
-top_combinations = TopK(k=ENSEMBLE_COUNT)
+top_models = TopK(k=TOP_MODEL_MAXIMUM)
 
-# Search top K combinations of training hyper-parameters all hyper-parameters
+# Train on all hyper-parameters and collect the top K models
 with progress_bar:
     for hyper_parameters in list(TrainingHyperParameters.get_all_combinations())[-2:]:
         model = train_model(
@@ -54,10 +56,13 @@ with progress_bar:
             loss_function=hyper_parameters.loss_function,
         )
 
-        # Update the top K combinations of hyper-parameters
-        top_combinations.update((loss_val, hyper_parameters), key=lambda t: t[0])
+        # Update the top K models
+        top_models.update((loss_val, (hyper_parameters, model)), key=lambda t: t[0])
 
 # Show outputs
-print(f"Top {ENSEMBLE_COUNT} hyper-parameters: ")
-for entry in top_combinations:
-    pprint(entry)
+print(f"Top {top_models.k} hyper-parameters: ")
+for loss_val, (hyper_parameters, model) in top_models:
+    pprint((loss_val, (hyper_parameters, model)))
+
+# Save the top K models
+from torch import save as save_model
