@@ -39,7 +39,7 @@ FEATURE_COUNT = (
     .prod(dtype=int32)
     .item()
 )
-SNAPSHOT_NUMBER: int | None = None
+SNAPSHOT_NUMBER: int | None = 1
 """
 Select the snapshot to load.
 If `None` or Falsy, a new snapshot will be created.

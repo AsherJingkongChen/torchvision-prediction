@@ -3,8 +3,8 @@ from functools import cache
 from torch import nn, optim, Tensor
 from typing import Callable, Iterable
 
-from .optimizers import Momentum
-from .lr_schedulers import CosineLR
+from .extensions.optim import Momentum
+from .extensions.lr_scheduler import CosineLR
 
 
 @dataclass
