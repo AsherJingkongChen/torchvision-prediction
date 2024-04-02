@@ -1,6 +1,6 @@
 def request_best_device():
     """
-    A helper function to request the best device for the current environment
+    Request the best device for the current environment
     """
     from torch import backends, cuda, device
 
@@ -12,3 +12,32 @@ def request_best_device():
         return device("mkldnn")
     else:
         return device("cpu")
+
+
+def request_snapshot_path(number: int | None = None) -> str:
+    """
+    Requests the snapshot path with the given number
+
+    ## Parameters
+    - number (`int | None`)
+        - Defaults to `None`, and creates a new snapshot.
+
+    ## Returns
+    - The snapshot path (`str`)
+    """
+    from pathlib import Path
+
+    if not number:
+        number = (
+            sorted(
+                map(
+                    lambda p: int(p.name),
+                    Path("snapshots").glob("index/*/"),
+                )
+            )[-1:]
+            or [0]
+        )[0] + 1
+
+    path = Path(f"snapshots/index/{number}/")
+    path.mkdir(parents=True, exist_ok=bool(number))
+    return str(path)

@@ -15,7 +15,7 @@ def train_model(
     Train a new model with the given arguments
 
     ## Returns
-        model (`torch.nn.Module`)
+    - model (`torch.nn.Module`)
     """
 
     # Define the model

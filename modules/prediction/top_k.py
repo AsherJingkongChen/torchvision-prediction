@@ -11,7 +11,7 @@ class TopK:
     def __init__(self, k: int):
         super().__init__()
         self.k = k
-        self.list = []
+        self._list = []
 
     def update(self, element: _T, key: Callable[[_T], _T] | None = None) -> None:
         """
@@ -19,10 +19,10 @@ class TopK:
         2. Sort elements
         3. Remove the last element if necessary
         """
-        self.list.append(element)
-        self.list.sort(key=key)
-        if len(self.list) > self.k:
-            self.list.pop()
+        self._list.append(element)
+        self._list.sort(key=key)
+        if len(self._list) > self.k:
+            self._list.pop()
 
     def __iter__(self) -> Iterator[_T]:
-        return self.list.__iter__()
+        return self._list.__iter__()
