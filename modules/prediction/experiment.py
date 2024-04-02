@@ -11,18 +11,17 @@ from .top_k import TopK
 DEVICE = request_best_device()
 ENSEMBLE_COUNT: int = 5
 RANDOM_SEED: int = 96
-DATA_TRAIN, DATA_TEST = random_split(
+DATA_TRAIN, DATA_TEST, _ = random_split(
     dataset=construct_KMNIST(),
-    lengths=[0.8, 0.2],
+    lengths=[0.08, 0.02, 0.90],
     generator=Generator().manual_seed(RANDOM_SEED),
 )
-DATA_TRAIN = DataLoader(DATA_TRAIN, batch_size=1 << 14 >> 3)
-DATA_TEST = DataLoader(DATA_TEST, batch_size=1 << 14 >> 3)
+DATA_TRAIN = DataLoader(DATA_TRAIN, batch_size=1 << 14)
+DATA_TEST = DataLoader(DATA_TEST, batch_size=1 << 14)
 
 progress_bar = tqdm(
-    desc="Training",
+    desc="Training with all hyper-parameters",
     total=TrainingHyperParameters.get_all_combination_count()
-    * len(DATA_TRAIN)
     * TrainingHyperParameters.get_max_learning_epochs(),
     leave=True,
 )
