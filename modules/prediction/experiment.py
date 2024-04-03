@@ -110,12 +110,14 @@ if top_models_snapshot_path.is_file():
     pprint(top_models)
 
     validation_loss = test_model(
-        data_test=DataLoader(DATA, batch_size=10000),
+        data_test=DATA_TEST,
         model=top_models[0][0],
         device=DEVICE,
         loss_function=top_models[0][1].loss_function,
     )
-    print(f"Validation loss: {validation_loss}")
+    print(f"Re-validation loss: {validation_loss}")
+
+    from torch.func import stack_module_state
 
 elif top_models_snapshot_path.exists():
     raise OSError(f"{top_models_snapshot_path} should be a file")
