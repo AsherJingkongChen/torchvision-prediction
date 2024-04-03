@@ -1,6 +1,6 @@
 from pathlib import Path
 from pprint import pprint
-from torch import float32, int32, Generator, load, nn, save, tensor
+from torch import Generator, int32, load, nn, save, tensor
 from torch.types import Device
 from torch.utils.data import DataLoader, random_split
 
@@ -13,11 +13,19 @@ from .train import train_model
 
 
 # Define the settings of the experiment
+SNAPSHOT_NUMBER: int | None = 2
+"""
+Select the snapshot to load.
+If `None` or Falsy, a new snapshot will be created.
+
+It allows faster inference by loading the pre-trained models.
+"""
+
 DEVICE: Device = request_best_device()
 RANDOM_SEED: int = 96
 ENSEMBLE_COUNT: int = 5
 DATA = construct_KMNIST()
-DATA_COUNT: int = 2000
+DATA_COUNT: int = 200
 DATA_TRAIN_RATIO: float = 0.80
 DATA_TRAIN_COUNT = int(DATA_TRAIN_RATIO * DATA_COUNT)
 DATA_TEST_COUNT = DATA_COUNT - DATA_TRAIN_COUNT
@@ -26,12 +34,12 @@ DATA_TRAIN, DATA_TEST, _ = random_split(
     lengths=[
         DATA_TRAIN_COUNT,
         DATA_TEST_COUNT,
-        len(DATA) - DATA_TRAIN_COUNT - DATA_TEST_COUNT,
+        len(DATA) - DATA_COUNT,
     ],
     generator=Generator().manual_seed(RANDOM_SEED),
 )
-DATA_TRAIN = DataLoader(DATA_TRAIN, batch_size=10000)
-DATA_TEST = DataLoader(DATA_TEST, batch_size=10000)
+DATA_TRAIN = DataLoader(DATA_TRAIN, batch_size=min(max(DATA_COUNT, 1000), 20000))
+DATA_TEST = DataLoader(DATA_TEST, batch_size=min(max(DATA_COUNT, 1000), 20000))
 FEATURE_COUNT = (
     tensor(
         next(iter(DATA_TEST))[0].shape[1:],
@@ -40,13 +48,6 @@ FEATURE_COUNT = (
     .prod(dtype=int32)
     .item()
 )
-SNAPSHOT_NUMBER: int | None = 1
-"""
-Select the snapshot to load.
-If `None` or Falsy, a new snapshot will be created.
-
-It allows faster inference by loading the pre-trained models.
-"""
 
 _ = None
 
@@ -107,17 +108,16 @@ top_models_snapshot_path = Path(snapshot_path) / "top_models.zip"
 if top_models_snapshot_path.is_file():
     print(f'Loading the top models from "{top_models_snapshot_path}"')
     top_models = load(top_models_snapshot_path)
+
     pprint(top_models)
 
-    validation_loss = test_model(
+    revalidation_loss = test_model(
         data_test=DATA_TEST,
         model=top_models[0][0],
         device=DEVICE,
         loss_function=top_models[0][1].loss_function,
     )
-    print(f"Re-validation loss: {validation_loss}")
-
-    from torch.func import stack_module_state
+    print(f"Re-validation loss: {revalidation_loss}")
 
 elif top_models_snapshot_path.exists():
     raise OSError(f"{top_models_snapshot_path} should be a file")
