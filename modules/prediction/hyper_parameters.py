@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from functools import cache
 from torch import nn, optim, Tensor
 from typing import Callable, Iterable
 
@@ -20,7 +19,6 @@ class TrainingHyperParameters:
     normalizer: nn.modules.batchnorm._NormBase | None
 
     @staticmethod
-    @cache
     def DOMAIN():
         return {
             "hidden_node_count": (
@@ -50,7 +48,6 @@ class TrainingHyperParameters:
         }
 
     @staticmethod
-    @cache
     def get_all_combination_count() -> int:
         from functools import reduce
 
@@ -63,7 +60,6 @@ class TrainingHyperParameters:
         )
 
     @staticmethod
-    @cache
     def get_all_combinations() -> Iterable["TrainingHyperParameters"]:
         from itertools import product
 

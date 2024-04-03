@@ -60,10 +60,6 @@ def train_model(
         if hyper_parameters.learning_rate_scheduler
         else None
     )
-    learning_epochs_step = (
-        max(TrainingHyperParameters.DOMAIN()["learning_epochs"])
-        // hyper_parameters.learning_epochs
-    )
 
     # Train the model (Per epoch)
     model.train()
@@ -90,7 +86,7 @@ def train_model(
             scheduler.step()
 
         if progress_bar:
-            progress_bar.update(learning_epochs_step)
+            progress_bar.update()
 
     # Return the trained model
     return model

@@ -64,9 +64,15 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
 
     progress_bar = tqdm(
         desc="Training with all hyper-parameters",
-        total=TrainingHyperParameters.get_all_combination_count()
-        * max(TrainingHyperParameters.DOMAIN()["learning_epochs"]),
+        dynamic_ncols=True,
         leave=True,
+        total=sum(
+            map(
+                lambda p: p.learning_epochs,
+                TrainingHyperParameters.get_all_combinations(),
+            )
+        ),
+        mininterval=1,
     )
     top_models = TopK(k=ENSEMBLE_COUNT)
 
@@ -102,7 +108,7 @@ if top_models_snapshot_path.is_file():
     print(f'Loading the top models from "{top_models_snapshot_path}"')
     top_models = load(top_models_snapshot_path)
     pprint(top_models)
-    
+
     validation_loss = test_model(
         data_test=DataLoader(DATA, batch_size=10000),
         model=top_models[0][0],
