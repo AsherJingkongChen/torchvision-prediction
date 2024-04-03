@@ -21,19 +21,14 @@ def train_model(
     # Define the model
     model = nn.Sequential(
         nn.Flatten(),
-        nn.Linear(feature_count, hyper_parameters.hidden_node_count, device=device),
+        nn.Linear(feature_count, hyper_parameters.hidden_node_count),
         *(
-            [
-                hyper_parameters.normalizer(
-                    hyper_parameters.hidden_node_count,
-                    device=device,
-                )
-            ]
+            [hyper_parameters.normalizer(hyper_parameters.hidden_node_count)]
             if hyper_parameters.normalizer
             else []
         ),
         hyper_parameters.activation_function(),
-        nn.Linear(hyper_parameters.hidden_node_count, 1, device=device),
+        nn.Linear(hyper_parameters.hidden_node_count, 1),
     )
 
     # Initialize the weights of the model (1/2)
