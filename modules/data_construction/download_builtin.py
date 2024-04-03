@@ -6,6 +6,7 @@ def construct_KMNIST():
     from torch import get_default_dtype, tensor
 
     dtype = get_default_dtype()
+
     def to_target_tensor(target: int):
         return tensor([target], dtype=dtype)
 
