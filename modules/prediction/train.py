@@ -62,7 +62,7 @@ def train_model(
     )
 
     # Train the model (Per epoch)
-    model.train()
+    model = model.to(device=device).train()
     for _ in range(hyper_parameters.learning_epochs):
         # Train the model (Per batched data)
         for data in data_train:
