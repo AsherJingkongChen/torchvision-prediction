@@ -1,4 +1,5 @@
 Minimum_Supported_Python_Version_Is==3.10 ; python_version < "3.10"
+black>=24.3.0
 pip>=24.0
 setuptools>=69.2.0
 torch>=2.2.2

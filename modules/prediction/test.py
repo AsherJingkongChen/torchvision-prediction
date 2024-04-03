@@ -19,10 +19,9 @@ def test_model(
     """
 
     # Evaluate the model
-    loss_sum = 0.0
-
     model = model.to(device=device).eval()
     with no_grad():
+        loss_sum = 0.0
         for i, data in enumerate(data_test):
             X, Y = data
             X, Y = X.to(device=device), Y.to(device=device)
