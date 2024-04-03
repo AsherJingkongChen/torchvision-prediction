@@ -1,6 +1,7 @@
 from pathlib import Path
 from pprint import pprint
 from torch import float32, int32, Generator, load, nn, save, tensor
+from torch.types import Device
 from torch.utils.data import DataLoader, random_split
 
 from ..data_construction.download_builtin import construct_KMNIST
@@ -12,11 +13,11 @@ from .train import train_model
 
 
 # Define the settings of the experiment
-DEVICE = request_best_device()
+DEVICE: Device = request_best_device()
 RANDOM_SEED: int = 96
 ENSEMBLE_COUNT: int = 5
 DATA = construct_KMNIST()
-DATA_COUNT: int = 1000
+DATA_COUNT: int = 2000
 DATA_TRAIN_RATIO: float = 0.80
 DATA_TRAIN_COUNT = int(DATA_TRAIN_RATIO * DATA_COUNT)
 DATA_TEST_COUNT = DATA_COUNT - DATA_TRAIN_COUNT
@@ -29,8 +30,8 @@ DATA_TRAIN, DATA_TEST, _ = random_split(
     ],
     generator=Generator().manual_seed(RANDOM_SEED),
 )
-DATA_TRAIN = DataLoader(DATA_TRAIN, batch_size=1 << 14)
-DATA_TEST = DataLoader(DATA_TEST, batch_size=1 << 14)
+DATA_TRAIN = DataLoader(DATA_TRAIN, batch_size=10000)
+DATA_TEST = DataLoader(DATA_TEST, batch_size=10000)
 FEATURE_COUNT = (
     tensor(
         next(iter(DATA_TEST))[0].shape[1:],
@@ -70,9 +71,7 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
     top_models = TopK(k=ENSEMBLE_COUNT)
 
     with progress_bar:
-        for hyper_parameters in list(TrainingHyperParameters.get_all_combinations())[
-            -10:
-        ]:
+        for hyper_parameters in TrainingHyperParameters.get_all_combinations():
             model = train_model(
                 data_train=DATA_TRAIN,
                 feature_count=FEATURE_COUNT,
@@ -93,7 +92,7 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
                 key=lambda t: t[2],
             )
 
-    return top_models
+    return list(top_models)
 
 
 snapshot_path = request_snapshot_path(SNAPSHOT_NUMBER)
@@ -103,10 +102,19 @@ if top_models_snapshot_path.is_file():
     print(f'Loading the top models from "{top_models_snapshot_path}"')
     top_models = load(top_models_snapshot_path)
     pprint(top_models)
+    
+    validation_loss = test_model(
+        data_test=DataLoader(DATA, batch_size=10000),
+        model=top_models[0][0],
+        device=DEVICE,
+        loss_function=top_models[0][1].loss_function,
+    )
+    print(f"Validation loss: {validation_loss}")
+
 elif top_models_snapshot_path.exists():
     raise OSError(f"{top_models_snapshot_path} should be a file")
 else:
-    top_models = list(train_and_test_all())
+    top_models = train_and_test_all()
 
     print(f'Saving the top models at "{top_models_snapshot_path}"')
     save(top_models, top_models_snapshot_path)
