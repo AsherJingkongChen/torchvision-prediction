@@ -125,6 +125,7 @@ else:
     save(top_models, top_models_snapshot_path)
 
 # Ensemble the top models
+hyper_parameters_base = [entry[1] for entry in top_models]
 validation_losses_base = [float(f"{entry[2]:.4f}") for entry in top_models]
 validation_loss_ensemble = test_ensemble(
     data_test=DATA_TEST,
@@ -134,5 +135,7 @@ validation_loss_ensemble = test_ensemble(
 )
 
 # Show the output
+print(f"Hyper-parameters of the base models: ")
+pprint(hyper_parameters_base)
 print(f"Validation loss of the base models: {validation_losses_base}")
 print(f"Validation loss of the ensemble: {validation_loss_ensemble:.5f}")
