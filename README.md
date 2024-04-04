@@ -46,8 +46,55 @@ It is set to `2000` by default. You can set it to other values like `1000`, `900
 
 ```plaintext
 Loading the top models from "snapshots/index/2000/top_models.zip"
-Validation loss of the base models: 4.38, 4.46, 4.50, 4.51, 4.52
-Validation loss of the ensemble: 3.866
+Hyper-parameters of the base models: 
+[TrainingHyperParameters(hidden_node_count=11,
+                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
+                         weight_initializer=<function xavier_normal_ at 0x107fb83a0>,
+                         loss_function=<function mse_loss at 0x107f19d80>,
+                         regularization_factor=0.0001,
+                         optimizer=<class 'torch.optim.adam.Adam'>,
+                         learning_epochs=300,
+                         learning_rate_scheduler=None,
+                         normalizer=None),
+ TrainingHyperParameters(hidden_node_count=11,
+                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
+                         weight_initializer=<function xavier_normal_ at 0x107fb83a0>,
+                         loss_function=<function mse_loss at 0x107f19d80>,
+                         regularization_factor=0.001,
+                         optimizer=<class 'torch.optim.adam.Adam'>,
+                         learning_epochs=300,
+                         learning_rate_scheduler=None,
+                         normalizer=None),
+ TrainingHyperParameters(hidden_node_count=11,
+                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
+                         weight_initializer=<function kaiming_normal_ at 0x107fb8550>,
+                         loss_function=<function mse_loss at 0x107f19d80>,
+                         regularization_factor=0.0001,
+                         optimizer=<class 'torch.optim.adam.Adam'>,
+                         learning_epochs=300,
+                         learning_rate_scheduler=None,
+                         normalizer=None),
+ TrainingHyperParameters(hidden_node_count=11,
+                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
+                         weight_initializer=<function xavier_normal_ at 0x107fb83a0>,
+                         loss_function=<function mse_loss at 0x107f19d80>,
+                         regularization_factor=0.0001,
+                         optimizer=<class 'torch.optim.adam.Adam'>,
+                         learning_epochs=200,
+                         learning_rate_scheduler=None,
+                         normalizer=None),
+ TrainingHyperParameters(hidden_node_count=11,
+                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
+                         weight_initializer=<function kaiming_normal_ at 0x107fb8550>,
+                         loss_function=<function mse_loss at 0x107f19d80>,
+                         regularization_factor=0.001,
+                         optimizer=<class 'torch.optim.adam.Adam'>,
+                         learning_epochs=300,
+                         learning_rate_scheduler=None,
+                         normalizer=None)]
+Validation loss of the base models: [0.0357, 0.0366, 0.0367, 0.0376, 0.0382]
+Validation loss of the ensemble: 0.03355
+Prediction rate of the ensemble: 0.80250
 ```
 
 ## Attributions
