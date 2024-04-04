@@ -14,7 +14,8 @@ from .train import train_model
 
 
 # Define the settings of the experiment
-SNAPSHOT_NUMBER: int | None = 2000
+
+SNAPSHOT_NUMBER: int | None = 1000
 """
 Select the snapshot to load.
 If `None` or Falsy, a new snapshot will be created.
@@ -26,8 +27,12 @@ DEVICE: Device = request_best_device()
 RANDOM_SEED: int = 96
 ENSEMBLE_COUNT: int = 5
 DATA = construct_KMNIST()
-DATA_COUNT: int = 2000
+DATA_COUNT: int = 5
+TAG_COUNT = 10
 DATA_TRAIN_RATIO: float = 0.80
+
+# Auto generated settings
+
 DATA_TRAIN_COUNT = int(DATA_TRAIN_RATIO * DATA_COUNT)
 DATA_TEST_COUNT = DATA_COUNT - DATA_TRAIN_COUNT
 DATA_TRAIN, DATA_TEST, _ = random_split(
@@ -84,6 +89,7 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
             model = train_model(
                 data_train=DATA_TRAIN,
                 feature_count=FEATURE_COUNT,
+                tag_count=TAG_COUNT,
                 device=DEVICE,
                 hyper_parameters=hyper_parameters,
                 progress_bar=progress_bar,

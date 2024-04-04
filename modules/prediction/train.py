@@ -1,6 +1,7 @@
 from torch import device, nn
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
+
 from .hyper_parameters import TrainingHyperParameters
 
 
@@ -8,6 +9,7 @@ def train_model(
     data_train: DataLoader,
     device: device,
     feature_count: int,
+    tag_count: int,
     hyper_parameters: TrainingHyperParameters,
     progress_bar: tqdm = None,
 ) -> nn.Module:
@@ -28,7 +30,8 @@ def train_model(
             else []
         ),
         hyper_parameters.activation_function(),
-        nn.Linear(hyper_parameters.hidden_node_count, 1),
+        nn.Linear(hyper_parameters.hidden_node_count, tag_count),
+        nn.Softmax(dim=1)
     )
 
     # Initialize the weights of the model (1/2)

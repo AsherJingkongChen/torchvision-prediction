@@ -1,6 +1,5 @@
 from torch import device, no_grad, nn, Tensor
 from torch.utils.data import DataLoader
-from tqdm.auto import tqdm
 from typing import Callable
 
 

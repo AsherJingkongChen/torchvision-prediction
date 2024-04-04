@@ -8,7 +8,9 @@ def construct_KMNIST():
     dtype = get_default_dtype()
 
     def to_target_tensor(target: int):
-        return tensor([target], dtype=dtype)
+        values = [0.0] * 10
+        values[target] = 1.0
+        return tensor(values, dtype=dtype)
 
     return ConcatDataset(
         (
