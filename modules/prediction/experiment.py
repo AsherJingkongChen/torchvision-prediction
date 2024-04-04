@@ -125,7 +125,7 @@ else:
     save(top_models, top_models_snapshot_path)
 
 # Ensemble the top models
-validation_losses_base = ", ".join([f"{entry[2]:.4f}" for entry in top_models])
+validation_losses_base = [float(f"{entry[2]:.4f}") for entry in top_models]
 validation_loss_ensemble = test_ensemble(
     data_test=DATA_TEST,
     models=[entry[0] for entry in top_models],
