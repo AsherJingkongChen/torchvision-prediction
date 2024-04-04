@@ -119,6 +119,9 @@ else:
     top_models = train_and_test_all()
 
     print(f'Saving the top models at "{top_models_snapshot_path}"')
+
+    for entry in top_models:
+        entry[0].to(device="cpu")
     save(top_models, top_models_snapshot_path)
 
 # Ensemble the top models
