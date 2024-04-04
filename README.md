@@ -4,6 +4,10 @@
 
 Predict the label of some images from the built-in datasets of `torchvision` using a neural network.
 
+## Prerequisites
+
+- Python `3.10` or above
+
 ## Experiment
 
 Please open your terminal and change the working directory to this project folder, and run these commands:
