@@ -14,7 +14,7 @@ def test_model(
 
     ## Returns
     - Validation loss (`float`)
-        - Adopts the mean of validation losses on `data_test`
+        - Uses the mean of validation losses on `data_test`
     """
 
     # Evaluate the model
