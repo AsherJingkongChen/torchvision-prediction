@@ -14,7 +14,7 @@ from .train import train_model
 
 
 # Define the settings of the experiment
-SNAPSHOT_NUMBER: int | None = 4000
+SNAPSHOT_NUMBER: int | None = 2000
 """
 Select the snapshot to load.
 If `None` or Falsy, a new snapshot will be created.
@@ -26,7 +26,7 @@ DEVICE: Device = request_best_device()
 RANDOM_SEED: int = 96
 ENSEMBLE_COUNT: int = 5
 DATA = construct_KMNIST()
-DATA_COUNT: int = 4000
+DATA_COUNT: int = 2000
 DATA_TRAIN_RATIO: float = 0.80
 DATA_TRAIN_COUNT = int(DATA_TRAIN_RATIO * DATA_COUNT)
 DATA_TEST_COUNT = DATA_COUNT - DATA_TRAIN_COUNT
