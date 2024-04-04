@@ -22,18 +22,18 @@ class TrainingHyperParameters:
     def DOMAIN():
         return {
             "hidden_node_count": (
-                # 5,
-                # 8,
+                5,
+                8,
                 11,
             ),
             "activation_function": (
-                # nn.Tanh,
+                nn.Tanh,
                 nn.ReLU,
             ),
             "weight_initializer": (
-                # nn.init.normal_,
+                nn.init.normal_,
                 nn.init.xavier_normal_,
-                # nn.init.kaiming_normal_,
+                nn.init.kaiming_normal_,
             ),
             "loss_function": (
                 # Loss functions
@@ -44,22 +44,22 @@ class TrainingHyperParameters:
                 0.0001,
             ),
             "optimizer": (
-                # optim.SGD,
-                # Momentum,
+                optim.SGD,
+                Momentum,
                 optim.Adam,
             ),
             "learning_epochs": (
-                # 100,
-                # 200,
+                100,
+                200,
                 300,
             ),
             "learning_rate_scheduler": (
                 None,
-                # CosineLR,
+                CosineLR,
             ),
             "normalizer": (
                 None,
-                # nn.BatchNorm1d,
+                nn.BatchNorm1d,
             ),
         }
 
