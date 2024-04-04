@@ -22,29 +22,45 @@ class TrainingHyperParameters:
     def DOMAIN():
         return {
             "hidden_node_count": (
-                5,
-                8,
+                # 5,
+                # 8,
                 11,
             ),
-            "activation_function": (nn.Tanh, nn.ReLU),
-            "weight_initializer": (
-                nn.init.normal_,
-                nn.init.xavier_normal_,
-                nn.init.kaiming_normal_,
+            "activation_function": (
+                # nn.Tanh,
+                nn.ReLU,
             ),
-            "loss_function": (nn.functional.mse_loss,),
-            "regularization_factor": (0.001, 0.0001),
+            "weight_initializer": (
+                # nn.init.normal_,
+                nn.init.xavier_normal_,
+                # nn.init.kaiming_normal_,
+            ),
+            "loss_function": (
+                # Loss functions
+                nn.functional.mse_loss,
+            ),
+            "regularization_factor": (
+                0.001,
+                0.0001,
+            ),
             "optimizer": (
-                optim.SGD,
-                Momentum,
+                # optim.SGD,
+                # Momentum,
                 optim.Adam,
             ),
-            "learning_epochs": (100, 200, 300),
+            "learning_epochs": (
+                # 100,
+                # 200,
+                300,
+            ),
             "learning_rate_scheduler": (
                 None,
-                CosineLR,
+                # CosineLR,
             ),
-            "normalizer": (None, nn.BatchNorm1d),
+            "normalizer": (
+                None,
+                # nn.BatchNorm1d,
+            ),
         }
 
     @staticmethod
