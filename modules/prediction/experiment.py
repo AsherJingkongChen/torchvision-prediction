@@ -14,7 +14,7 @@ from .train import train_model
 
 
 # Define the settings of the experiment
-SNAPSHOT_NUMBER: int | None = 2000
+SNAPSHOT_NUMBER: int | None = 5
 """
 Select the snapshot to load.
 If `None` or Falsy, a new snapshot will be created.
@@ -26,7 +26,7 @@ DEVICE: Device = request_best_device()
 RANDOM_SEED: int = 96
 ENSEMBLE_COUNT: int = 5
 DATA = construct_KMNIST()
-DATA_COUNT: int = 2000
+DATA_COUNT: int = 5
 DATA_TRAIN_RATIO: float = 0.80
 DATA_TRAIN_COUNT = int(DATA_TRAIN_RATIO * DATA_COUNT)
 DATA_TEST_COUNT = DATA_COUNT - DATA_TRAIN_COUNT
@@ -62,7 +62,7 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
         - An entry contains the model, training hyper-parameters and validation loss.
     """
 
-    from tqdm.auto import tqdm
+    from tqdm import tqdm
 
     progress_bar = tqdm(
         desc="Training with all hyper-parameters",
@@ -75,6 +75,7 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
             )
         ),
         mininterval=1,
+        bar_format="{l_bar}{bar}| [{elapsed}<{remaining}]",
     )
     top_models = TopK(k=ENSEMBLE_COUNT)
 
@@ -103,6 +104,7 @@ def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float
     return list(top_models)
 
 
+# Load the top models or train and test models with all hyper-parameters
 snapshot_path = request_snapshot_path(SNAPSHOT_NUMBER)
 top_models_snapshot_path = Path(snapshot_path) / "top_models.zip"
 
@@ -110,16 +112,6 @@ if top_models_snapshot_path.is_file():
     print(f'Loading the top models from "{top_models_snapshot_path}"')
 
     top_models = load(top_models_snapshot_path)
-    validation_losses_base = ", ".join([f"{entry[2]:.2f}" for entry in top_models])
-    validation_loss_ensemble = test_ensemble(
-        data_test=DATA_TEST,
-        models=[entry[0] for entry in top_models],
-        device=DEVICE,
-        loss_function=nn.functional.mse_loss,
-    )
-
-    print(f"Validation loss of the base models: {validation_losses_base}")
-    print(f"Validation loss of the ensemble: {validation_loss_ensemble:.3f}")
 
 elif top_models_snapshot_path.exists():
     raise OSError(f"{top_models_snapshot_path} should be a file")
@@ -128,4 +120,16 @@ else:
 
     print(f'Saving the top models at "{top_models_snapshot_path}"')
     save(top_models, top_models_snapshot_path)
-    pprint(top_models)
+
+# Ensemble the top models
+validation_losses_base = ", ".join([f"{entry[2]:.2f}" for entry in top_models])
+validation_loss_ensemble = test_ensemble(
+    data_test=DATA_TEST,
+    models=[entry[0] for entry in top_models],
+    device=DEVICE,
+    loss_function=nn.functional.mse_loss,
+)
+
+# Show the output
+print(f"Validation loss of the base models: {validation_losses_base}")
+print(f"Validation loss of the ensemble: {validation_loss_ensemble:.3f}")
