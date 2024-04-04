@@ -22,6 +22,22 @@ python3 -m pip install -Ur requirements.txt
 python3 run.py
 ```
 
+### Details
+
+To switch snapshots, you can change the `SNAPSHOT_NUMBER` variable in the file `modules/prediction/experiment.py`:
+
+```python
+SNAPSHOT_NUMBER: int | None = 2000
+"""
+Select the snapshot to load.
+If `None` or Falsy, a new snapshot will be created.
+
+It allows faster inference by loading the pre-trained models.
+"""
+```
+
+It is set to `2000` by default. You can set it to other values like `1000`, `9000`, etc.
+
 ## Output
 
 1. \[Default\] Snapshot 2000, Data count: `2000`
