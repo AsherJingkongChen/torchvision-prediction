@@ -19,7 +19,7 @@ def train_model(
 
     ## Returns
     - model (`torch.nn.Module | None`)
-        - An acceptable model or `None` if the model is not acceptable.
+        - An acceptable model or `None` if the model is not acceptable
     """
 
     # Define the model
@@ -96,7 +96,7 @@ def train_model(
             scheduler.step()
 
         # Update the epoch
-        if not hyper_parameters.learning_epochs:
+        if hyper_parameters.learning_epochs:
             if epoch < hyper_parameters.learning_epochs:
                 epoch += 1
             else:
@@ -105,5 +105,11 @@ def train_model(
     # Update the progress bar by 1
     progress_bar.update()
 
+    # If the threshold loss presents,
     # Return `None` as the model is not acceptable
-    return None
+    if threshold_loss:
+        return None
+
+    # Otherwise, return the model.
+    else:
+        return model
