@@ -14,7 +14,7 @@ class TrainingHyperParameters:
     loss_function: Callable[[Tensor, Tensor], Tensor]
     regularization_factor: float
     optimizer: optim.Optimizer
-    learning_epochs: int
+    learning_epochs: int | None
     learning_rate_scheduler: optim.lr_scheduler.LRScheduler | None
     normalizer: nn.modules.batchnorm._NormBase | None
 

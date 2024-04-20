@@ -11,13 +11,15 @@ def train_model(
     feature_count: int,
     tag_count: int,
     hyper_parameters: TrainingHyperParameters,
-    progress_bar: tqdm = None,
-) -> nn.Module:
+    threshold_loss: float,
+    progress_bar: tqdm,
+) -> nn.Module | None:
     """
     Train a new model with the given arguments
 
     ## Returns
-    - model (`torch.nn.Module`)
+    - model (`torch.nn.Module | None`)
+        - An acceptable model or `None` if the model is not acceptable.
     """
 
     # Define the model
@@ -61,7 +63,9 @@ def train_model(
 
     # Train the model (Per epoch)
     model = model.to(device=device).train()
-    for _ in range(hyper_parameters.learning_epochs):
+
+    epoch = 0
+    while True:
         # Train the model (Per batched data)
         for data in data_train:
             X, Y = data
@@ -73,6 +77,11 @@ def train_model(
             # Forward pass
             loss = hyper_parameters.loss_function(model(X), Y)
 
+            # Check if the loss is lower than the threshold.
+            # If so, return the model as it is acceptable.
+            if loss.lt(threshold_loss).all():
+                return model
+
             # Backward pass
             loss.backward()
 
@@ -83,8 +92,20 @@ def train_model(
         if scheduler:
             scheduler.step()
 
-        if progress_bar:
+        # Update the epoch
+        if not hyper_parameters.learning_epochs:
+            # Update the progress bar
             progress_bar.update()
 
-    # Return the trained model
-    return model
+            if epoch < hyper_parameters.learning_epochs:
+                epoch += 1
+            else:
+                break
+
+    # Update the progress bar with the remaining epochs
+    if hyper_parameters.learning_epochs:
+        remaining_epochs = hyper_parameters.learning_epochs - epoch
+        progress_bar.update(remaining_epochs)
+
+    # Return `None` as the model is not acceptable
+    return None
