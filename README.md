@@ -40,62 +40,41 @@ It allows faster inference by loading the pre-trained models.
 
 It is set to `2000` by default. You can set it to other values like `1000`, `9000`, etc.
 
-## Output
+## Outputs
 
-1. \[Default\] Snapshot 2000, Data count: `2000`
+The outputs stand for the execution results of the experiment (See `modules/prediction/experiment.py`). The output contains the settings of the experiment and models and the validation results.
 
-```plaintext
-Loading the top models from "snapshots/index/2000/top_models.zip"
-Hyper-parameters of the base models: 
-[TrainingHyperParameters(hidden_node_count=11,
-                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
-                         weight_initializer=<function xavier_normal_ at 0x107fb83a0>,
-                         loss_function=<function mse_loss at 0x107f19d80>,
-                         regularization_factor=0.0001,
-                         optimizer=<class 'torch.optim.adam.Adam'>,
-                         learning_epochs=300,
-                         learning_rate_scheduler=None,
-                         normalizer=None),
- TrainingHyperParameters(hidden_node_count=11,
-                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
-                         weight_initializer=<function xavier_normal_ at 0x107fb83a0>,
-                         loss_function=<function mse_loss at 0x107f19d80>,
-                         regularization_factor=0.001,
-                         optimizer=<class 'torch.optim.adam.Adam'>,
-                         learning_epochs=300,
-                         learning_rate_scheduler=None,
-                         normalizer=None),
- TrainingHyperParameters(hidden_node_count=11,
-                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
-                         weight_initializer=<function kaiming_normal_ at 0x107fb8550>,
-                         loss_function=<function mse_loss at 0x107f19d80>,
-                         regularization_factor=0.0001,
-                         optimizer=<class 'torch.optim.adam.Adam'>,
-                         learning_epochs=300,
-                         learning_rate_scheduler=None,
-                         normalizer=None),
- TrainingHyperParameters(hidden_node_count=11,
-                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
-                         weight_initializer=<function xavier_normal_ at 0x107fb83a0>,
-                         loss_function=<function mse_loss at 0x107f19d80>,
-                         regularization_factor=0.0001,
-                         optimizer=<class 'torch.optim.adam.Adam'>,
-                         learning_epochs=200,
-                         learning_rate_scheduler=None,
-                         normalizer=None),
- TrainingHyperParameters(hidden_node_count=11,
-                         activation_function=<class 'torch.nn.modules.activation.ReLU'>,
-                         weight_initializer=<function kaiming_normal_ at 0x107fb8550>,
-                         loss_function=<function mse_loss at 0x107f19d80>,
-                         regularization_factor=0.001,
-                         optimizer=<class 'torch.optim.adam.Adam'>,
-                         learning_epochs=300,
-                         learning_rate_scheduler=None,
-                         normalizer=None)]
-Validation loss of the base models: [0.0357, 0.0366, 0.0367, 0.0376, 0.0382]
-Validation loss of the ensemble: 0.03355
-Prediction rate of the ensemble: 0.80250
-```
+1. \[Default\] Snapshot 2000, Dataset: `KMNIST Dataset`, Data count: `2000`, Task: `Classification`, X is real number (Pixel analogy data) and Y is one-hot encoded probability vector with 10 classes.
+
+    ```plaintext
+    Settings of the experiment:
+    {'Data range of X': [0.0, 1.0],
+    'Data range of Y': [0.0, 1.0],
+    'Data shape of X': (1, 28, 28),
+    'Data shape of Y': (10,),
+    'Data type of X': torch.float32,
+    'Data type of Y': torch.float32,
+    'Device': 'mps',
+    'Dimension of X': 784,
+    'Dimension of Y': 10}
+    torch.Size([1, 28, 28])
+
+    Loading the top models from "snapshots/index/2000/top_models.zip"
+    Best hyper-parameters: 
+    TrainingHyperParameters(hidden_node_count=11,
+                            activation_function=<class 'torch.nn.modules.activation.ReLU'>,
+                            weight_initializer=<function xavier_normal_ at 0x1051b8670>,
+                            loss_function=<function mse_loss at 0x10511e050>,
+                            regularization_factor=0.0001,
+                            optimizer=<class 'torch.optim.adam.Adam'>,
+                            learning_epochs=300,
+                            learning_rate_scheduler=None,
+                            normalizer=None)
+    Training with the best hyper-parameters on different stop criterias: 100%|██| [01:03<00:00]
+    Validation loss of the model stopping on epoch: 0.03696
+    Validation loss of the model stopping on threshold of loss: 0.03654
+    Model stopping on epoch and threshold of loss is not acceptable
+    ```
 
 ## Attributions
 
