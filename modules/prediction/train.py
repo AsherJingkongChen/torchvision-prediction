@@ -11,8 +11,8 @@ def train_model(
     feature_count: int,
     tag_count: int,
     hyper_parameters: TrainingHyperParameters,
-    threshold_loss: float,
     progress_bar: tqdm,
+    threshold_loss: float | None = None,
 ) -> nn.Module | None:
     """
     Train a new model with the given arguments
@@ -79,7 +79,10 @@ def train_model(
 
             # Check if the loss is lower than the threshold.
             # If so, return the model as it is acceptable.
-            if loss.lt(threshold_loss).all():
+            if threshold_loss and loss.lt(threshold_loss).all():
+                # Update the progress bar by 1
+                progress_bar.update()
+
                 return model
 
             # Backward pass
@@ -94,18 +97,13 @@ def train_model(
 
         # Update the epoch
         if not hyper_parameters.learning_epochs:
-            # Update the progress bar
-            progress_bar.update()
-
             if epoch < hyper_parameters.learning_epochs:
                 epoch += 1
             else:
                 break
 
-    # Update the progress bar with the remaining epochs
-    if hyper_parameters.learning_epochs:
-        remaining_epochs = hyper_parameters.learning_epochs - epoch
-        progress_bar.update(remaining_epochs)
+    # Update the progress bar by 1
+    progress_bar.update()
 
     # Return `None` as the model is not acceptable
     return None
