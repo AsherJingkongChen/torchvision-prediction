@@ -20,6 +20,8 @@ def train_model(
     ## Returns
     - model (`torch.nn.Module | None`)
         - An acceptable model or `None` if the model is not acceptable
+            - A model can be not acceptable if the validation loss
+              is not less than the threshold loss within the given learning epochs.
     """
 
     # Define the model
