@@ -81,8 +81,6 @@ def train_model(
             dist: Tensor = (P - Y).abs()
             loss = hyper_parameters.loss_function(P, Y)
 
-            print(epoch, dist.mean().item())
-
             # Check if the loss is lower than the threshold.
             # If so, return the model as it is acceptable.
             if threshold_dist and dist.mean() < threshold_dist:

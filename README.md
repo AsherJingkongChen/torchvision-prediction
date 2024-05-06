@@ -70,9 +70,9 @@ The outputs stand for the execution results of the experiment (See `modules/pred
                             learning_epochs=300,
                             learning_rate_scheduler=None,
                             normalizer=None)
-    Training with the best hyper-parameters on different stop criterias: 100%|██| [01:03<00:00]
-    Validation loss of the model stopping on epoch: 0.03696
-    Validation loss of the model stopping on threshold of dist: 0.03654
+    Training with the best hyper-parameters on different stop criterias: 100%|███████████████████████████| [01:15<00:00]
+    Validation loss of the model stopping on epoch: 0.03691
+    Validation loss of the model stopping on threshold of dist: 0.03501
     Model stopping on epoch and threshold of dist is not acceptable
     ```
 
