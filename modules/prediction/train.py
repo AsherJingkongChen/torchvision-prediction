@@ -1,4 +1,4 @@
-from torch import device, nn
+from torch import device, nn, Tensor
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
@@ -12,7 +12,7 @@ def train_model(
     tag_count: int,
     hyper_parameters: TrainingHyperParameters,
     progress_bar: tqdm,
-    threshold_loss: float | None = None,
+    threshold_dist: float | None = None,
 ) -> nn.Module | None:
     """
     Train a new model with the given arguments
@@ -77,11 +77,15 @@ def train_model(
             optimizer.zero_grad()
 
             # Forward pass
-            loss = hyper_parameters.loss_function(model(X), Y)
+            P = model(X)
+            dist: Tensor = (P - Y).abs()
+            loss = hyper_parameters.loss_function(P, Y)
+
+            print(epoch, dist.mean().item())
 
             # Check if the loss is lower than the threshold.
             # If so, return the model as it is acceptable.
-            if threshold_loss and loss.lt(threshold_loss).all():
+            if threshold_dist and dist.mean() < threshold_dist:
                 # Update the progress bar by 1
                 progress_bar.update()
 
@@ -109,7 +113,7 @@ def train_model(
 
     # If the threshold loss presents,
     # Return `None` as the model is not acceptable
-    if threshold_loss:
+    if threshold_dist:
         return None
 
     # Otherwise, return the model.

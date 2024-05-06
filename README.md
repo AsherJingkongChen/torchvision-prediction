@@ -72,8 +72,8 @@ The outputs stand for the execution results of the experiment (See `modules/pred
                             normalizer=None)
     Training with the best hyper-parameters on different stop criterias: 100%|██| [01:03<00:00]
     Validation loss of the model stopping on epoch: 0.03696
-    Validation loss of the model stopping on threshold of loss: 0.03654
-    Model stopping on epoch and threshold of loss is not acceptable
+    Validation loss of the model stopping on threshold of dist: 0.03654
+    Model stopping on epoch and threshold of dist is not acceptable
     ```
 
 ## Attributions

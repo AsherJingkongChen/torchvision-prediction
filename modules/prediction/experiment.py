@@ -6,7 +6,6 @@ from torch.utils.data import DataLoader, random_split
 from tqdm import tqdm
 
 from ..data_construction.download_builtin import construct_KMNIST
-from .ensemble import test_ensemble
 from .environment import request_best_device, request_snapshot_path
 from .hyper_parameters import TrainingHyperParameters
 from .test import test_model
@@ -31,7 +30,7 @@ DATA = construct_KMNIST()
 DATA_COUNT: int = 2000
 TAG_COUNT = 10
 DATA_TRAIN_RATIO: float = 0.80
-STOP_CRITERIA_THRESHOLD_LOSS: float = 5e-3
+STOP_CRITERIA_THRESHOLD_DIST: float = 0.01
 
 # Auto generated settings
 
@@ -75,6 +74,7 @@ pprint(
 )
 pprint(DATA[0][0].shape)
 print()
+
 
 def train_and_test_all() -> list[tuple[nn.Module, TrainingHyperParameters, float]]:
     """
@@ -144,25 +144,16 @@ else:
 # Ensemble the top models
 hyper_parameters_base = [entry[1] for entry in top_models]
 validation_losses_base = [float(f"{entry[2]:.4f}") for entry in top_models]
-# validation_loss_ensemble, prediction_rate_ensemble = test_ensemble(
-#     data_test=DATA_TEST,
-#     models=[entry[0] for entry in top_models],
-#     device=DEVICE,
-#     loss_function=nn.functional.mse_loss,
-# )
-
-# # Show the output
-# print(f"Hyper-parameters of the base models: ")
-# pprint(hyper_parameters_base)
-# print(f"Validation loss of the base models: {validation_losses_base}")
-# print(f"Validation loss of the ensemble: {validation_loss_ensemble:.5f}")
-# print(f"Prediction rate of the ensemble: {prediction_rate_ensemble:.5f}")
 
 # Uses the best hyper-parameters to train the model with different stop criterias
 best_hyper_parameters = hyper_parameters_base[0]
 best_hyper_parameters_without_learning_epochs = TrainingHyperParameters(
     learning_epochs=None,
-    **{k: v for k, v in best_hyper_parameters.__dict__.items() if k != "learning_epochs"}
+    **{
+        k: v
+        for k, v in best_hyper_parameters.__dict__.items()
+        if k != "learning_epochs"
+    },
 )
 
 # Show the best hyper-parameters
@@ -189,61 +180,71 @@ with progress_bar:
         hyper_parameters=best_hyper_parameters,
         progress_bar=progress_bar,
     )
-    validation_loss_stop_on_epoch = test_model(
-        data_test=DATA_TEST,
-        model=model_stop_on_epoch,
-        device=DEVICE,
-        loss_function=best_hyper_parameters.loss_function,
-    ) if model_stop_on_epoch else None
+    validation_loss_stop_on_epoch = (
+        test_model(
+            data_test=DATA_TEST,
+            model=model_stop_on_epoch,
+            device=DEVICE,
+            loss_function=best_hyper_parameters.loss_function,
+        )
+        if model_stop_on_epoch
+        else None
+    )
 
-    # Train the model stopping on threshold of loss
-    model_stop_on_threshold_loss = train_model(
+    # Train the model stopping on threshold of dist
+    model_stop_on_threshold_dist = train_model(
         data_train=DATA_TRAIN,
         feature_count=FEATURE_COUNT,
         tag_count=TAG_COUNT,
         device=DEVICE,
         hyper_parameters=best_hyper_parameters_without_learning_epochs,
         progress_bar=progress_bar,
-        threshold_loss=STOP_CRITERIA_THRESHOLD_LOSS,
+        threshold_dist=STOP_CRITERIA_THRESHOLD_DIST,
     )
-    validation_loss_stop_on_threshold_loss = test_model(
-        data_test=DATA_TEST,
-        model=model_stop_on_threshold_loss,
-        device=DEVICE,
-        loss_function=best_hyper_parameters_without_learning_epochs.loss_function,
-    ) if model_stop_on_threshold_loss else None
+    validation_loss_stop_on_threshold_dist = (
+        test_model(
+            data_test=DATA_TEST,
+            model=model_stop_on_threshold_dist,
+            device=DEVICE,
+            loss_function=best_hyper_parameters_without_learning_epochs.loss_function,
+        )
+        if model_stop_on_threshold_dist
+        else None
+    )
 
-    # Train the model stopping on epoch and threshold of loss
-    model_stop_on_epoch_and_threshold_loss = train_model(
+    # Train the model stopping on epoch and threshold of dist
+    model_stop_on_epoch_and_threshold_dist = train_model(
         data_train=DATA_TRAIN,
         feature_count=FEATURE_COUNT,
         tag_count=TAG_COUNT,
         device=DEVICE,
         hyper_parameters=best_hyper_parameters,
         progress_bar=progress_bar,
-        threshold_loss=STOP_CRITERIA_THRESHOLD_LOSS,
+        threshold_dist=STOP_CRITERIA_THRESHOLD_DIST,
     )
-    validation_loss_stop_on_epoch_and_threshold_loss = test_model(
-        data_test=DATA_TEST,
-        model=model_stop_on_epoch_and_threshold_loss,
-        device=DEVICE,
-        loss_function=best_hyper_parameters.loss_function,
-    ) if model_stop_on_epoch_and_threshold_loss else None
+    validation_loss_stop_on_epoch_and_threshold_dist = (
+        test_model(
+            data_test=DATA_TEST,
+            model=model_stop_on_epoch_and_threshold_dist,
+            device=DEVICE,
+            loss_function=best_hyper_parameters.loss_function,
+        )
+        if model_stop_on_epoch_and_threshold_dist
+        else None
+    )
 
 print(
     f"Validation loss of the model stopping on epoch: "
     f"{validation_loss_stop_on_epoch:.5f}"
 )
 print(
-    f"Validation loss of the model stopping on threshold of loss: "
-    f"{validation_loss_stop_on_threshold_loss:.5f}"
+    f"Validation loss of the model stopping on threshold of dist: "
+    f"{validation_loss_stop_on_threshold_dist:.5f}"
 )
-if model_stop_on_epoch_and_threshold_loss:
+if model_stop_on_epoch_and_threshold_dist:
     print(
-        f"Validation loss of the model stopping on epoch and threshold of loss: "
-        f"{validation_loss_stop_on_epoch_and_threshold_loss:.5f}"
+        f"Validation loss of the model stopping on epoch and threshold of dist: "
+        f"{validation_loss_stop_on_epoch_and_threshold_dist:.5f}"
     )
 else:
-    print(
-        f"Model stopping on epoch and threshold of loss is not acceptable"
-    )
+    print(f"Model stopping on epoch and threshold of dist is not acceptable")
