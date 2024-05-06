@@ -30,7 +30,7 @@ DATA = construct_KMNIST()
 DATA_COUNT: int = 2000
 TAG_COUNT = 10
 DATA_TRAIN_RATIO: float = 0.80
-STOP_CRITERIA_THRESHOLD_DIST: float = 0.01
+STOP_CRITERIA_THRESHOLD_DIST: float = 0.025
 
 # Auto generated settings
 
